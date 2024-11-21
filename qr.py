@@ -11,7 +11,7 @@ def add_rounded_rectangle(draw, position, size, radius, fill):
     draw.pieslice([x0, y1 - 2 * radius, x0 + 2 * radius, y1], 90, 180, fill=fill)
     draw.pieslice([x1 - 2 * radius, y1 - 2 * radius, x1, y1], 0, 90, fill=fill)
 
-def generate_qr_with_logo_in_rounded_rectangle(data, logo_path, output_path, text):
+def generate_qr_with_logo_in_rounded_rectangle(data, output_path, logo_path='', text=''):
     # Step 1: Generate basic QR code
     qr = qrcode.QRCode(
         version=1,  # Version 1: 21x21 matrix
@@ -26,26 +26,27 @@ def generate_qr_with_logo_in_rounded_rectangle(data, logo_path, output_path, tex
     qr_img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
 
     # Step 3: Open the logo and resize it to fit inside the QR code
-    logo = Image.open(logo_path)
-    qr_width, qr_height = qr_img.size
-    logo_size = qr_width // 8  # Resize logo to 1/4th of the QR code size
-    logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
+    if logo_path:
+        logo = Image.open(logo_path)
+        qr_width, qr_height = qr_img.size
+        logo_size = qr_width // 8  # Resize logo to 1/4th of the QR code size
+        logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
 
-    # Step 4: Create a rounded rectangle behind the logo
-    rounded_rect_size = (logo_size + 20, logo_size + 20)  # Add padding around the logo
-    rounded_rect = Image.new("RGBA", rounded_rect_size, (255, 255, 255, 0))  # Transparent background
-    draw = ImageDraw.Draw(rounded_rect)
+        # Step 4: Create a rounded rectangle behind the logo
+        rounded_rect_size = (logo_size + 20, logo_size + 20)  # Add padding around the logo
+        rounded_rect = Image.new("RGBA", rounded_rect_size, (255, 255, 255, 0))  # Transparent background
+        draw = ImageDraw.Draw(rounded_rect)
 
-    # Draw the rounded rectangle
-    add_rounded_rectangle(draw, (0, 0, rounded_rect_size[0], rounded_rect_size[1]), rounded_rect_size[0] // 5, radius=20, fill="white")
+        # Draw the rounded rectangle
+        add_rounded_rectangle(draw, (0, 0, rounded_rect_size[0], rounded_rect_size[1]), rounded_rect_size[0] // 5, radius=20, fill="white")
 
-    # Step 5: Paste the logo onto the rounded rectangle
-    logo_pos = ((rounded_rect_size[0] - logo_size) // 2, (rounded_rect_size[1] - logo_size) // 2)
-    rounded_rect.paste(logo, logo_pos, mask=logo if logo.mode == 'RGBA' else None)
+        # Step 5: Paste the logo onto the rounded rectangle
+        logo_pos = ((rounded_rect_size[0] - logo_size) // 2, (rounded_rect_size[1] - logo_size) // 2)
+        rounded_rect.paste(logo, logo_pos, mask=logo if logo.mode == 'RGBA' else None)
 
-    # Step 6: Calculate the position to paste the rounded rectangle onto the QR code
-    qr_pos = ((qr_width - rounded_rect_size[0]) // 2, (qr_height - rounded_rect_size[1]) // 2)
-    qr_img.paste(rounded_rect, qr_pos, mask=rounded_rect)
+        # Step 6: Calculate the position to paste the rounded rectangle onto the QR code
+        qr_pos = ((qr_width - rounded_rect_size[0]) // 2, (qr_height - rounded_rect_size[1]) // 2)
+        qr_img.paste(rounded_rect, qr_pos, mask=rounded_rect)
 
     # Step 7: Add text to the bottom of the QR code
     if text:
@@ -65,8 +66,13 @@ def generate_qr_with_logo_in_rounded_rectangle(data, logo_path, output_path, tex
 
 # Usage example
 generate_qr_with_logo_in_rounded_rectangle(
-    data="http://example.com",
-    logo_path="assets/logo.png",  # Path to your logo image
+    data="https://isha.co/IE-KTM",
     output_path="output/qr.png",  # Output file
+    logo_path="assets/logo.png",  # Path to your logo image
     text="Hello world!"  # Text to add
+)
+
+generate_qr_with_logo_in_rounded_rectangle(
+    data="https://isha.co/IE-KTM",
+    output_path="output/qr-ie-ktm.png",  # Output file
 )
