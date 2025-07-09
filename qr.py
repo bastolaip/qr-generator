@@ -52,7 +52,7 @@ def generate_qr(data, output_path, box_size=30, logo_path='', text=''):
     # Step 7: Add text to the bottom of the QR code
     if text:
         extra_padding_top = 10  # Space between QR and text
-        extra_padding_bottom = 10  # Space below text
+        extra_padding_bottom = 40  # Space below text
         text_area_height = 60  # Height allocated for text
         new_img_height = qr_height + extra_padding_top + text_area_height + extra_padding_bottom
 
@@ -60,7 +60,7 @@ def generate_qr(data, output_path, box_size=30, logo_path='', text=''):
         new_img.paste(qr_img, (0, 0))  # Paste QR at the top
 
         draw_qr = ImageDraw.Draw(new_img)
-        font = ImageFont.truetype("assets/font/Roboto/Roboto-Bold.ttf", 60)
+        font = ImageFont.truetype("assets/font/Roboto/Roboto-Bold.ttf", 50)
 
         # Calculate text size and position
         text_width, text_height = draw_qr.textbbox((0, 0), text, font=font)[2:]
@@ -98,8 +98,20 @@ def generate_qr(data, output_path, box_size=30, logo_path='', text=''):
 # )
 
 generate_qr(
-    data="https://vms-online.sadhguru.org/isha_vms/quick_scan/portal/83be8b6b-f429-4fec-be2e-742ba8410cc0?purpose=Check-In",
-    output_path="output/vms-spot.png",  # Output file
+    data="https://isha.co/IE-Nepal-inquiry",
+    output_path="output/ie-nepal-inquiry-qr-with-text-all-caps.png",  # Output file
+    box_size=30,
+    text="INNER ENGINEERING IN NEPAL - INQUIRY"
+)
+
+generate_qr(
+    data="1234",
+    output_path="output/1234.png",  # Output file
     box_size=20,
-    text='SPOT REGISTRATION'
+)
+
+generate_qr(
+    data="A8-B45",
+    output_path="output/A8-B45.png",  # Output file
+    box_size=20,
 )
